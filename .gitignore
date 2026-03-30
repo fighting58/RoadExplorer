@@ -1,0 +1,21 @@
+# Project files
+test.xlsx
+reference/
+deploy/
+
+# Credentials
+auth.json
+auth.js
+
+# Build artifacts
+dist/
+build/
+*.spec
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

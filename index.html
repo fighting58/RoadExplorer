@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="always">
+    <link rel="icon" href="data:,">
+    <title>RoadSeaker - Location Visualizer</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+    <script src="auth.js"></script>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <header class="main-header">
+            <div class="logo">Road<span>Seaker</span></div>
+            <div class="upload-controls">
+                <input type="file" id="fileInput" accept=".xlsx, .dbf" hidden>
+                <label for="fileInput" class="btn-primary">파일 불러오기 (.xlsx / .dbf)</label>
+            </div>
+            <div id="fileInfo" class="file-info">선택된 파일 없음</div>
+            <div class="field-selector-wrap">
+                <div class="field-selector-title">Fields</div>
+                <div id="fieldSelector" class="field-selector"></div>
+            </div>
+        </header>
+
+        <main class="viewer-container">
+            <section class="viewer-panel" id="staticMapView">
+                <div class="panel-header">Static Map</div>
+                <div class="panel-content glass-card" id="staticMapContainer">
+                    <div id="staticMap" class="pano-canvas"></div>
+                    <div id="staticMapPlaceholder" class="placeholder">파일을 불러오면 지도가 표시됩니다.</div>
+
+                    <div id="povArrow" class="pov-arrow">
+                        <svg viewBox="0 0 100 100" width="40" height="40">
+                            <path d="M50 10 L90 90 L50 70 L10 90 Z" fill="#ff4d4d" stroke="#fff" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+            <section class="viewer-panel" id="panoramaView">
+                <div class="panel-header">Street View Panorama</div>
+                <div class="panel-content glass-card" id="panoContainer">
+                    <div id="pano" class="pano-canvas"></div>
+                    <div id="panoPlaceholder" class="placeholder">파일을 불러오면 파노라마 이미지가 표시됩니다.</div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="navigator-bar">
+            <div class="nav-controls">
+                <button id="prevBtn" class="nav-btn" disabled>&larr;</button>
+                <div class="record-indicator">
+                    <input type="number" id="fidInput" class="glass-input fid-input" value="1"> / <span id="maxFid">0</span>
+                </div>
+                <button id="nextBtn" class="nav-btn" disabled>&rarr;</button>
+            </div>
+
+            <div class="field-table-wrap">
+                <table class="field-table">
+                    <thead id="fieldValueHead">
+                        <tr>
+                            <th>Field</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fieldValueBody">
+                        <tr>
+                            <td>Value</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
