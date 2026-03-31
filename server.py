@@ -8,9 +8,8 @@ import webbrowser
 import threading
 import time
 
-# Naver API Config (from auth.js logic)
-CLIENT_ID = "3mfvr3zq2y"
-CLIENT_SECRET = "yAJRpCO2QIeBvvQPsasagjfohld9BJSns92BXMWe"
+CLIENT_ID = None
+CLIENT_SECRET = None
 
 # Path handling for PyInstaller
 def get_resource_path(relative_path):
@@ -18,6 +17,21 @@ def get_resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath("."), relative_path)
+
+def load_auth_config(config_path):
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Missing auth config: {config_path}")
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = json.load(f)
+
+    client_id = str(config.get("client_id", "")).strip()
+    client_secret = str(config.get("client_secret", "")).strip()
+
+    if not client_id or not client_secret:
+        raise ValueError("auth.json must include non-empty client_id and client_secret")
+
+    return client_id, client_secret
 
 class ProxyHandler(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
@@ -61,6 +75,14 @@ if __name__ == "__main__":
     PORT = 8000
     # Ensure current dir is where the script is located
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+    auth_path = os.path.join(os.getcwd(), "auth.json")
+    try:
+        CLIENT_ID, CLIENT_SECRET = load_auth_config(auth_path)
+    except Exception as e:
+        print(f"[ERROR] {e}")
+        print("Create auth.json from auth.json.example and set your Naver API keys.")
+        sys.exit(1)
     
     # Run browser opener in a separate thread
     threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()

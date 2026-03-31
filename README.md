@@ -41,8 +41,9 @@ python server.py
 ## 인증 설정
 
 1. 네이버 클라우드 플랫폼(NCP)에서 지도 API 키 준비
-2. `auth.js.example`를 참고해 `auth.js` 작성
-3. NCP 콘솔의 Web 서비스 URL에 아래 등록
+2. `auth.js.example`를 참고해 `auth.js` 작성 (`client_id`만 사용)
+3. `auth.json.example`를 참고해 `auth.json` 작성 (`client_id`, `client_secret` 모두 필요)
+4. NCP 콘솔의 Web 서비스 URL에 아래 등록
    - `http://localhost:8000/`
    - `http://127.0.0.1:8000/` (권장)
 
