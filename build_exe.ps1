@@ -1,4 +1,4 @@
-# RoadSeaker EXE Builder (using PyInstaller)
+# RoadExplorer EXE Builder (using PyInstaller)
 Write-Host "Checking for PyInstaller..." -ForegroundColor Cyan
 
 # 1. Install PyInstaller if not present
@@ -15,13 +15,13 @@ pyinstaller --onefile `
     --add-data "app.js;." `
     --add-data "index.css;." `
     --add-data "auth.js;." `
-    --name "RoadSeaker" `
+    --name "RoadExplorer" `
     --clean `
     server.py
 
 Write-Host ""
 Write-Host "Build Complete!" -ForegroundColor Green
 Write-Host "You can find the standalone file in the 'dist' folder." -ForegroundColor Yellow
-Write-Host "File: dist/RoadSeaker.exe" -ForegroundColor Yellow
+Write-Host "File: dist/RoadExplorer.exe" -ForegroundColor Yellow
 Write-Host ""
 pause

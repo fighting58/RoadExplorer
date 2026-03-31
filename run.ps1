@@ -1,14 +1,14 @@
-# RoadSeaker PowerShell Launcher
+# RoadExplorer PowerShell Launcher
 $PSScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $PSScriptRoot
 
 Write-Host "============================" -ForegroundColor Cyan
-Write-Host "  RoadSeaker Launcher (.ps1)" -ForegroundColor Cyan
+Write-Host "  RoadExplorer Launcher (.ps1)" -ForegroundColor Cyan
 Write-Host "============================" -ForegroundColor Cyan
 Write-Host ""
 
 # Start the python server in the background
-Write-Host "[1/2] Starting RoadSeaker Server..." -ForegroundColor Cyan
+Write-Host "[1/2] Starting RoadExplorer Server..." -ForegroundColor Cyan
 $serverProc = Start-Process python -ArgumentList "server.py" -NoNewWindow -PassThru
 
 # Wait for 1 second to bind

@@ -1,5 +1,5 @@
 /**
- * RoadSeaker - Main Application Logic
+ * RoadExplorer - Main Application Logic
  * Author: Antigravity AI
  */
 

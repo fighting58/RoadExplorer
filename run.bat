@@ -1,9 +1,9 @@
 @echo off
-title RoadSeaker Launcher
+title RoadExplorer Launcher
 cd /d %~dp0
 
 echo ==========================================
-echo   RoadSeaker - Location Visualizer
+echo   RoadExplorer - Location Visualizer
 echo ==========================================
 echo.
 echo [1/2]Starting Local Proxy Server (python server.py)...

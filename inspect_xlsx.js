@@ -8,7 +8,7 @@ try {
     process.exit(1);
 }
 
-const filePath = 'c:\\Users\\Kim\\Documents\\AntiGravity\\RoadSeaker\\test.xlsx';
+const filePath = path.join(__dirname, 'test.xlsx');
 try {
     const workbook = XLSX.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
