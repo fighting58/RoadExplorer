@@ -1,5 +1,12 @@
-const XLSX = require('xlsx');
 const path = require('path');
+
+let XLSX = null;
+try {
+    XLSX = require('xlsx');
+} catch (e) {
+    console.error('xlsx package is not installed. This helper is optional and not required by the web app.');
+    process.exit(1);
+}
 
 const filePath = 'c:\\Users\\Kim\\Documents\\AntiGravity\\RoadSeaker\\test.xlsx';
 try {
