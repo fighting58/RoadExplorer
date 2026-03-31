@@ -12,7 +12,10 @@ const AppState = {
     staticZoom: 18,
     maxFid: 0,
     fields: [],
-    selectedFields: []
+    selectedFields: [],
+    // Original record coordinates for fixed marker
+    originalLat: 0,
+    originalLng: 0
 };
 
 function getClientId() {
@@ -59,17 +62,6 @@ function setupEventListeners() {
         if (e.key === 'ArrowRight') navigate(1);
     });
 
-    // Mouse wheel zoom for Map
-    const mapContainer = document.getElementById('staticMapContainer');
-    mapContainer.addEventListener('wheel', (e) => {
-        if (!AppState.records || AppState.records.length === 0) return;
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 1 : -1;
-        AppState.staticZoom = Math.max(0, Math.min(20, AppState.staticZoom + delta));
-        const record = AppState.records[AppState.currentIndex];
-        updateStaticMapImage(record.lat, record.lng);
-    }, { passive: false });
-
     // Jump to FID
     const fidInput = document.getElementById('fidInput');
     fidInput.addEventListener('change', () => {
@@ -84,17 +76,52 @@ function setupEventListeners() {
         }
     });
 
+    // Static Map Double Click to move Panorama
+    const mapHost = document.getElementById('staticMap');
+    mapHost.addEventListener('dblclick', (e) => {
+        if (!AppState.panorama || !AppState.records || AppState.records.length === 0) return;
+        
+        const rect = mapHost.getBoundingClientRect();
+        // Calculate logical pixel offset relative to the 640x640 source image
+        // Final fixed sensitivity: 0.0023
+        const sensitivity = 0.0023;
+        const logicalX = (e.clientX - rect.left - rect.width / 2) * (640 / rect.width) * sensitivity;
+        const logicalY = (e.clientY - rect.top - rect.height / 2) * (640 / rect.height) * sensitivity;
+
+        const currentPanoPos = AppState.panorama.getPosition();
+        if (!currentPanoPos) return;
+
+        // Use EPSG3857 (Standard Web Mercator) for static map calculation
+        const projection = naver.maps.EPSG3857 || naver.maps.SphericalMercator;
+        if (!projection) return;
+
+        const centerPoint = projection.fromLatLngToPoint(currentPanoPos);
+        // At zoom Level L, 1 logical pixel = 1 / 2^L in 256-scale world points
+        const pointScale = Math.pow(2, AppState.staticZoom);
+        
+        const targetPoint = new naver.maps.Point(
+            centerPoint.x + (logicalX / pointScale),
+            centerPoint.y + (logicalY / pointScale)
+        );
+
+        const targetLatLng = projection.fromPointToLatLng(targetPoint);
+        AppState.panorama.setPosition(targetLatLng);
+    });
 }
 
-function buildStaticMapProxyUrl(lat, lng) {
-    const center = `${lng},${lat}`;
+function buildStaticMapProxyUrl(centerLat, centerLng) {
     const params = new URLSearchParams({
-        center,
+        center: `${centerLng},${centerLat}`,
         level: String(AppState.staticZoom),
         w: '640',
         h: '640',
         maptype: 'satellite_base'
     });
+    
+    // Proper way to add multiple duplicate keys in URLSearchParams
+    params.append('markers', `type:d|size:small|pos:${AppState.originalLng} ${AppState.originalLat}|color:red`);
+    params.append('markers', `type:d|size:tiny|pos:${AppState.originalLng} ${AppState.originalLat}|color:blue`);
+
     return `/map-proxy?${params.toString()}`;
 }
 
@@ -117,7 +144,7 @@ function getOrCreateStaticMapImage() {
     return img;
 }
 
-function updateStaticMapImage(lat, lng) {
+function updateStaticMapImage(centerLat, centerLng) {
     const img = getOrCreateStaticMapImage();
     if (!img) return;
 
@@ -132,7 +159,7 @@ function updateStaticMapImage(lat, lng) {
         const mapPlaceholder = document.getElementById('staticMapPlaceholder');
         if (mapPlaceholder) mapPlaceholder.style.display = 'none';
     };
-    img.src = buildStaticMapProxyUrl(lat, lng);
+    img.src = buildStaticMapProxyUrl(centerLat, centerLng);
 }
 
 function collectFieldNames(rawData) {
@@ -449,6 +476,7 @@ function initViews() {
         }
 
         // Handle internal position changes (clicks in pano)
+        // Map center follows panorama, but marker stays at original record position
         naver.maps.Event.addListener(AppState.panorama, 'pano_changed', () => {
             const pos = AppState.panorama.getPosition();
             if (pos) updateStaticMapImage(pos.lat(), pos.lng());
@@ -497,6 +525,10 @@ function updateViews(record) {
         return;
     }
     const latlng = new naver.maps.LatLng(record.lat, record.lng);
+
+    // Set the anchor for the fixed marker
+    AppState.originalLat = record.lat;
+    AppState.originalLng = record.lng;
 
     updateStaticMapImage(record.lat, record.lng);
 

@@ -66,6 +66,6 @@ if __name__ == "__main__":
     threading.Thread(target=open_browser, args=(PORT,), daemon=True).start()
     
     with http.server.HTTPServer(("", PORT), ProxyHandler) as httpd:
-        print(f"RoadSeaker Server (Standalone Mode) running at http://localhost:{PORT}")
+        print(f"RoadExplorer Server (Standalone Mode) running at http://localhost:{PORT}")
         print("Press Ctrl+C to stop the server.")
         httpd.serve_forever()
