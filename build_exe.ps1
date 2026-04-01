@@ -15,6 +15,7 @@ pyinstaller --onefile `
     --add-data "app.js;." `
     --add-data "index.css;." `
     --add-data "auth.js;." `
+    --add-data "auth.json;." `
     --name "RoadExplorer" `
     --clean `
     server.py
